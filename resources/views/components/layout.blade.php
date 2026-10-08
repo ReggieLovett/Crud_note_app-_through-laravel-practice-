@@ -14,6 +14,10 @@
             <a href="{{ route('notes.index') }}" class="text-xl font-bold text-gray-900">My Notes</a>
         </header>
  
+    @if (session('success'))
+        <x-alert>{{ session('success') }}</x-alert>
+    @endif
+
     {{ $slot }}
     </div>
 </body>
