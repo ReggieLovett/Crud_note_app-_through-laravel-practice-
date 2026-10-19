@@ -11,6 +11,7 @@ Route::get('/', function () {
 Route::get('/login',             [AuthController::class, 'showLogin'])->name('login');
 Route::get('/register',          [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register',         [AuthController::class, 'register']);
+Route::post('/logout',         [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/notes',             [NoteController::class, 'index'])->name('notes.index');
 Route::get('/notes/create',      [NoteController::class, 'create'])->name('notes.create');
