@@ -2,11 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return redirect()->route('notes.index');
 });
 
+//AUTH ROUTES
+Route::get('/login',             [AuthController::class, 'showLogin'])->name('login');
+Route::get('/register',          [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register',         [AuthController::class, 'register']);
+
+//NOTE ROUTES
 Route::get('/notes',             [NoteController::class, 'index'])->name('notes.index');
 Route::get('/notes/create',      [NoteController::class, 'create'])->name('notes.create');
 Route::post('/notes',            [NoteController::class, 'store'])->name('notes.store');
