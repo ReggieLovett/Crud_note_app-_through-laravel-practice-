@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facade\Auth;
-use Illuminate\Support\Facade\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -27,7 +27,7 @@ class AuthController extends Controller
      
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email'=> 'required|string|email|max:255|unique:user',
+            'email'=> 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -40,7 +40,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
         
-        return redirect()->route('notes.index')->with(success, 'Welcome, '. $user->name . '!');
+        return redirect()->route('notes.index')->with('success', 'Welcome, '. $user->name . '!');
     }
     
 }
