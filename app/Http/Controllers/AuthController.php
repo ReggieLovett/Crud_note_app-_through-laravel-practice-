@@ -42,5 +42,15 @@ class AuthController extends Controller
         
         return redirect()->route('notes.index')->with('success', 'Welcome, '. $user->name . '!');
     }
-    
+ 
+    //LOGOUT - ends the session
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate(); // throws away the session data
+        $request->session()->regenerateToken(); // regenerate CSRF tokens
+        
+        return redirect()->route('login')->with('success', 'You have been logged out');
+        
+    }
 }
