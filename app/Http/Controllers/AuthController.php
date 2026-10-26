@@ -7,46 +7,71 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-
 class AuthController extends Controller
 {
-    //LOGIN - shows the login form to our users
+    // LOGIN - show login page
     public function showLogin()
     {
-        return view('auth.login');
+        return view('auth.login');   
     }
-    //REGISTER - shows the register form to our users
+
+    // LOGIN - check the email and password
+    public function login(Request $request)
+    {
+        $credential = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);   
+
+        if (Auth::attempt($credential, $request->boolean('remember'))){
+            
+            $request->session()->regenerate(); // new session id after login
+
+            return redirect()->intended(route('notes.index'));
+        }
+
+        return back()
+            ->withErrors(['email' => 'These credentials does not match our records'])
+            ->onlyInput('email');
+            
+    }
+    
+    // REGISTER - show register page
     public function showRegister()
     {
-        return view('auth.register');
+        return view('auth.register');   
     }
-    //REGISTER - create the acocunts, then it would login the users
+
+    // REGISTER - create the account, then logs the user in 
     public function register(Request $request)
     {
+     
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255|email|unique:users',
-            'password' => 'required|string|min:8|confirmed'
+            'email'=> 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::Create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
-
+        
         Auth::login($user);
         $request->session()->regenerate();
-
+        
         return redirect()->route('notes.index')->with('success', 'Welcome, '. $user->name . '!');
     }
-
+ 
+    //LOGOUT - ends the session
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login')->with('success', 'You have been logged out.');
+        $request->session()->invalidate(); // throws away the session data
+        $request->session()->regenerateToken(); // regenerate CSRF tokens
+        
+        return redirect()->route('login')->with('success', 'You have been logged out');
+        
     }
 }
