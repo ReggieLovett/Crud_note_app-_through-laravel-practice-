@@ -14,6 +14,27 @@ class AuthController extends Controller
     {
         return view('auth.login');   
     }
+
+    // LOGIN - check the email and password
+    public function login(Request $request)
+    {
+        $credential = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);   
+
+        if (Auth::attempt($credential, $request->boolean('remember'))){
+            
+            $request->session()->regenerate(); // new session id after login
+
+            return redirect()->intended(route('notes.index'));
+        }
+
+        return back()
+            ->withErrors(['email' => 'These credentials does not match our records'])
+            ->onlyInput('email');
+            
+    }
     
     // REGISTER - show register page
     public function showRegister()
