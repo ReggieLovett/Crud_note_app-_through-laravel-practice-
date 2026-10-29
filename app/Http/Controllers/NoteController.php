@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Note;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NoteController extends Controller
 {
     // READ — show all notes
     public function index()
     {
-        $notes = Note::latest()->get();
+        $notes = Note::where('user_id', Auth::id())->latest()->get();
 
         return view('notes.index', ['notes' => $notes]);
     }
@@ -30,20 +31,30 @@ class NoteController extends Controller
             
         ]);
 
-        Note::create($validated);
+       $note= new Note($validated);
+       $note->user_id=Auth::id();
+       $note->save();
 
         return redirect()->route('notes.index')->with('success', 'Note added.');
+    }
+
+    private function authorizedOwner(Note $note): void{
+        if ($note->user_id != Auth::id()){
+            abort(403, 'Unauthorized action. fuck you');
+        }
     }
 
     // UPDATE — show the form, pre-filled
     public function edit(Note $note)
     {
+        $this->authorizedOwner($note);
         return view('notes.edit', ['note' => $note]);
     }
 
     // UPDATE — validate and save changes
     public function update(Request $request, Note $note)
     {
+        $this->authorizedOwner($note);
         $validated = $request->validate([
             'title' => 'required|max:100',
             'body'  => 'required',
@@ -57,6 +68,7 @@ class NoteController extends Controller
     // DELETE — remove the note
     public function destroy(Note $note)
     {
+        $this->authorizedOwner($note);
         $note->delete();
 
         return redirect()->route('notes.index')->with('success', 'Note deleted.');
