@@ -1,54 +1,53 @@
-# Notes App — Complete CRUD Reference (ITE 116)
+# Notes App — Eloquent Relationships Starter (ITE 116)
 
-Laravel 13 · PHP 8.3+ · SQLite · Create, Read, Update, Delete
+Laravel 13 · PHP 8.3+ · SQLite · Tailwind CSS 4 + Vite
+
+This lesson is about the **back end**: relationships and faster queries.
+The seeder and all the views are ready. A few views have **`STAGE` comments**
+marking where you will add a line or two during the code-along.
+
+## What's inside
+
+    database/seeders/DatabaseSeeder.php      2 accounts × 150 notes
+    resources/views/components/              layout, alert, input-field, note-card, auth-card
+    resources/views/auth/                    login, register
+    resources/views/notes/                   index, create, edit, all (new)
 
 ## Setup
 
-1. Create a project (choose **Starter kit: None**, **Database: SQLite**):
+Start from your Notes app from the Authentication lesson. Unzip this starter
+into your Downloads folder, go inside your Notes project, then run ONE of:
 
-       laravel new notes-app
-       cd notes-app
+    cp -R ~/Downloads/notes-app-relationships-starter/. .                     # Mac
+    robocopy %USERPROFILE%\Downloads\notes-app-relationships-starter . /E   # Windows (cmd)
 
-2. Copy these files into the matching folders, replacing `routes/web.php`:
+Mac users: do not drag folders in Finder. It replaces folders instead of merging them.
 
-       app/Models/Note.php
-       app/Http/Controllers/NoteController.php
-       database/migrations/2026_01_01_000000_create_notes_table.php
-       routes/web.php
-       resources/views/layout.blade.php
-       resources/views/notes/index.blade.php
-       resources/views/notes/create.blade.php
-       resources/views/notes/edit.blade.php
+Then rebuild the database with the sample data:
 
-3. Create the table and start the server:
+    php artisan migrate:fresh --seed     # WARNING: deletes all existing users and notes
+    npm run dev                          # leave running
+    php artisan serve                    # second terminal
 
-       php artisan migrate
-       php artisan serve or composer run dev
+## Demo accounts
 
+| Name | Email | Password |
+|---|---|---|
+| Marco Reyes | marco@example.com | password |
+| Joy Santos | joy@example.com | password |
 
-4. Open http://127.0.0.1:8000 — it redirects to /notes.
+Each account has 150 notes.
 
-> If you generate your own model with `php artisan make:model Note -m`, keep the
-> migration filename Artisan creates and paste in the `Schema::create` block
-> instead of copying this migration file.
+## Where you'll add front-end code
 
-## Routes
+Search the project for `STAGE` to find every spot.
 
-| Method | URL                | Controller | Name          |
-|--------|--------------------|------------|---------------|
-| GET    | /notes             | index      | notes.index   |
-| GET    | /notes/create      | create     | notes.create  |
-| POST   | /notes             | store      | notes.store   |
-| GET    | /notes/{note}/edit | edit       | notes.edit    |
-| PUT    | /notes/{note}      | update     | notes.update  |
-| DELETE | /notes/{note}      | destroy    | notes.destroy |
+| File | Comment | Stage |
+|---|---|---|
+| `components/layout.blade.php` | add the query counter footer | 2 |
+| `notes/index.blade.php` | "Showing x–y of z notes" line and page links | 6 |
+| `components/layout.blade.php` | "Everyone" nav link | 7 |
+| `components/layout.blade.php` | greeting with the note count | 8 |
 
-## Common errors
-
-| Error                                   | Fix                                              |
-|-----------------------------------------|--------------------------------------------------|
-| 419 Page Expired                        | add `@csrf` to the form                          |
-| 405 Method Not Allowed                  | add `@method('PUT')` or `@method('DELETE')`      |
-| Add [title] to fillable property        | list the field in the model's `$fillable`        |
-| no such table: notes                    | run `php artisan migrate`                        |
-| Route [notes.x] not defined             | check `->name(...)` in `routes/web.php`          |
+Everything else you type today is back end: models, controller, routes,
+`AppServiceProvider`, and one migration.

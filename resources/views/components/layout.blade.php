@@ -16,7 +16,10 @@
             <nav class="flex items-center gap-4 text-sm">
                 {{-- Shown only when a user is logged in --}}
                 @auth
+                    {{-- STAGE 7: add the "Everyone" nav link here --}}
+
                     <span class="text-gray-600">Hi, {{ auth()->user()->name }}</span>
+                    {{-- STAGE 8: replace the greeting above with one that also shows the note count --}}
 
                     @if (Route::has('logout'))
                         <form action="{{ route('logout') }}" method="POST">
@@ -44,6 +47,14 @@
         @endif
 
         {{ $slot }}
+
+        {{-- STAGE 2: add the query counter footer here --}}
+        @if(app()->isLocal())
+            <footer class="mt-10 pt-4 border-t border-gray-200 text-xs text-gray-400 text-center">
+               {{ count(DB::getQueryLog()) }} queries -
+               {{number_format(collect(DB::getQueryLog())->sum('time'),1)}} ms 
+            </footer>
+        @endif
     </div>
 </body>
 </html>
